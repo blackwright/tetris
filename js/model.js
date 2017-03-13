@@ -13,7 +13,6 @@ TETRIS.Model = ( function(TetMaker) {
   };
 
 
-
   // Board is generated as a 10 "width" by 20 "height"
   // two-dimensional array of zeroes.
 
@@ -27,7 +26,6 @@ TETRIS.Model = ( function(TetMaker) {
   };
 
 
-
   let _outOfBounds = (y, x) => {
     if (y > 19 || x < 0 || x > 9) {
       return true;
@@ -35,7 +33,6 @@ TETRIS.Model = ( function(TetMaker) {
       return false;
     }
   };
-
 
 
   // Collision check is performed by iterating through tetromino state
@@ -58,7 +55,6 @@ TETRIS.Model = ( function(TetMaker) {
   };
 
 
-
   // All movement and rotation is checked for validity by cloning the
   // tetromino, performing the movement with the tetroclone, then checking for
   // collision or out of bounds on the clone.
@@ -74,6 +70,7 @@ TETRIS.Model = ( function(TetMaker) {
     }
   };
 
+
   let moveRight = () => {
     let tetroclone = tetromino.clone();
     tetroclone.moveRight();
@@ -84,6 +81,7 @@ TETRIS.Model = ( function(TetMaker) {
       return false;
     }
   };
+
 
   // Tic is the tetromino's natural falling movement. Called on interval
   // from the controller and whenever the down key is pressed.
@@ -99,7 +97,6 @@ TETRIS.Model = ( function(TetMaker) {
       return false;
     }
   };
-
 
 
   // Getters
