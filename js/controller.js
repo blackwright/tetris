@@ -15,9 +15,11 @@ TETRIS.Controller = ( function(Model, View) {
 
     View.init({
       startGame: startGame,
+      rotate: rotate,
       moveLeft: moveLeft,
       moveRight: moveRight,
-      moveDown: moveDown
+      moveDown: moveDown,
+      drop: drop
     });
 
     render();
@@ -63,8 +65,12 @@ TETRIS.Controller = ( function(Model, View) {
   };
 
 
-  // Movement checks if input is enabled before executing the move
+  // All movement checks if input is enabled before executing the move
   // and then rendering the view.
+
+  let rotate = () => {
+    if (acceptInput && Model.rotate()) render();
+  };
 
   let moveLeft = () => {
     if (acceptInput && Model.moveLeft()) render();
@@ -72,6 +78,25 @@ TETRIS.Controller = ( function(Model, View) {
 
   let moveRight = () => {
     if (acceptInput && Model.moveRight()) render();
+  };
+
+
+  // Check for cleared lines on tic and instant drop.
+
+  let moveDown = () => {
+    if (acceptInput) {
+      Model.tic();
+      _clearLines();
+      render();
+    }
+  };
+
+  let drop = () => {
+    if (acceptInput) {
+      Model.drop();
+      _clearLines();
+      render();
+    }
   };
 
 
