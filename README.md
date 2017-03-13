@@ -1,6 +1,6 @@
-# tetris
+# [tetris](https://blackwright.github.io/tetris/index.html)
 
-The classic game implemented with JavaScript and HTML5 canvas.
+The classic game implemented with JavaScript and HTML5 canvas. [Play it here.](https://blackwright.github.io/tetris/index.html)
 
 Use your arrow keys to move/rotate and hit space to drop down.
 
