@@ -184,6 +184,7 @@ TETRIS.TetMaker = ( function() {
   // Tetrominoes can clone themselves with their current type, rotation
   // state, and location. This clone is used to check for potential
   // collisions and out of bounds state.
+  // The default argument for location is the spawn location.
 
   function Tetromino(stateIndex = 0, location = [0, 3]) {
     Tetroclone.call(this, _getRandomType(), stateIndex, location);
