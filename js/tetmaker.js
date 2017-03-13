@@ -143,6 +143,18 @@ TETRIS.TetMaker = ( function() {
                ]
 
 
+  // Helpers for tetromino randomization.
+
+  let _getRandomColor = () => {
+    let index = Math.floor(Math.random() * _colors.length);
+    return _colors[index];
+  };
+
+  let _getRandomType = () => {
+    let index = Math.floor(Math.random() * _types.length);
+    return _types[index];
+  };
+
 
   // Tetroclone constructor produces tetroclones that have all the
   // properties and methods of true tetrominoes, except those for getting

@@ -81,6 +81,39 @@ TETRIS.Model = ( function(TetMaker) {
   };
 
 
+  // Board absorbs tetromino blocks, triggered on collision.
+
+  let _merge = (tetromino, board) => {
+    let state = tetromino.getState();
+    let color = tetromino.getColor();
+    let location = tetromino.getLocation();
+    for (let rowIdx = 0; rowIdx < state.length; rowIdx++) {
+      for (let blockIdx = 0; blockIdx < state[rowIdx].length; blockIdx++) {
+        if (state[rowIdx][blockIdx]) {
+          let y = location[0] + rowIdx;
+          let x = location[1] + blockIdx;
+          board[y][x] = color;
+        }
+      }
+    }
+    _spawn();
+  };
+
+
+  // Triggers every time a tetromino is merged with the board.
+  // Game over occurs if new tetromino spawns with collision.
+  // Otherwise, model tetromino points to new tetromino.
+
+  let _spawn = () => {
+    let newTetromino = new TetMaker.Tetromino();
+    if (_collision(newTetromino, board)) {
+      _setGameOver();
+    } else {
+      tetromino = newTetromino;
+    }
+  };
+
+
   // All movement and rotation is checked for validity by cloning the
   // tetromino, performing the movement with the tetroclone, then checking for
   // collision or out of bounds on the clone.

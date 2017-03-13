@@ -1,5 +1,7 @@
 var TETRIS = TETRIS || {};
 
+var driver;
+
 TETRIS.Controller = ( function(Model, View) {
   'use strict';
 
@@ -97,6 +99,12 @@ TETRIS.Controller = ( function(Model, View) {
       _clearLines();
       render();
     }
+  };
+
+
+  let updateScore = () => {
+    let score = Model.getScore();
+    View.updateScore(score);
   };
 
 

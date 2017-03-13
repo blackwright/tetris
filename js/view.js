@@ -20,7 +20,7 @@ TETRIS.View = ( function() {
 
     _startButtonListener(startGame);
     _resetButtonListener();
-    _keydownListener();
+    _keydownListener(rotate, moveLeft, moveRight, moveDown, drop);
   };
 
 
@@ -54,7 +54,7 @@ TETRIS.View = ( function() {
   };
 
 
-  let _keydownListener = () => {
+  let _keydownListener = (rotate, moveLeft, moveRight, moveDown, drop) => {
     $(document).keydown( function(event) {
       switch(event.which) {
         // up
