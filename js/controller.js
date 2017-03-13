@@ -1,18 +1,23 @@
 var TETRIS = TETRIS || {};
 
-var driver;
+driver = undefined;
+
 
 TETRIS.Controller = ( function(Model, View) {
   'use strict';
 
-  // Input is disabled until the game starts.
-
-  let acceptInput = false;
+  let clearedLineCount, acceptInput;
 
 
   // Initializes model and view, passing in callback functions.
 
   let init = () => {
+
+    clearedLineCount = 0;
+
+    // input disabled until the game starts
+    acceptInput = false;
+
     Model.init();
 
     View.init({
@@ -21,9 +26,12 @@ TETRIS.Controller = ( function(Model, View) {
       moveLeft: moveLeft,
       moveRight: moveRight,
       moveDown: moveDown,
-      drop: drop
+      drop: drop,
+      resetGame: resetGame
     });
 
+    _updateScore();
+    View.updateLevel(0);
     render();
   }
 
@@ -41,10 +49,34 @@ TETRIS.Controller = ( function(Model, View) {
   };
 
 
+  let _updateScore = () => {
+    let score = Model.getScore();
+    View.updateScore(score);
+  };
+
+
   let _clearLines = () => {
     let lines = Model.clearLines();
-    if (lines) updateScore();
+    if (lines) {
+      _updateScore();
+      _updateLevel(lines);
+    }
     Model.deleteLinesFromBoard(lines);
+  };
+
+
+  let _updateLevel = (lines) => {
+    clearedLineCount += lines.length;
+    let level = parseInt(clearedLineCount / 5);
+    _updateGameSpeed(level);
+    View.updateLevel(level);
+  };
+
+
+  let _updateGameSpeed = (level) => {
+    clearInterval(driver);
+    let intervalTime = 1000 - level * 50;
+    driver = setInterval(_gameLoop, intervalTime);
   };
 
 
@@ -64,6 +96,12 @@ TETRIS.Controller = ( function(Model, View) {
   let startGame = () => {
     driver = setInterval(_gameLoop, 1000);
     acceptInput = true;
+  };
+
+
+  let resetGame = () => {
+    clearInterval(driver);
+    init();
   };
 
 
@@ -102,18 +140,13 @@ TETRIS.Controller = ( function(Model, View) {
   };
 
 
-  let updateScore = () => {
-    let score = Model.getScore();
-    View.updateScore(score);
-  };
-
-
   // Render method gets game state from model and passes them into the view.
 
   let render = () => {
+    let nextTetromino = Model.getNextTetromino();
     let tetromino = Model.getTetromino();
     let board = Model.getBoard();
-    View.render(tetromino, board);
+    View.render(nextTetromino, tetromino, board);
   };
 
 

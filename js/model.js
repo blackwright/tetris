@@ -3,14 +3,15 @@ var TETRIS = TETRIS || {};
 TETRIS.Model = ( function(TetMaker) {
   'use strict';
 
-  let board, tetromino;
-  let score = 0;
-  let _prevTetris = false;
-  let gameOver = false;
+  let _prevTetris, board, tetromino, nextTetromino, score, gameOver;
 
   let init = () => {
+    _prevTetris = false;
     board = _generateBoard();
     tetromino = new TetMaker.Tetromino();
+    nextTetromino = new TetMaker.Tetromino();
+    score = 0;
+    gameOver = false;
   };
 
 
@@ -101,15 +102,15 @@ TETRIS.Model = ( function(TetMaker) {
 
 
   // Triggers every time a tetromino is merged with the board.
-  // Game over occurs if new tetromino spawns with collision.
-  // Otherwise, model tetromino points to new tetromino.
+  // Game over occurs if nextTetromino starts with collision.
+  // Otherwise, spawn a new tetromino and set to nextTetromino.
 
   let _spawn = () => {
-    let newTetromino = new TetMaker.Tetromino();
-    if (_collision(newTetromino, board)) {
+    tetromino = nextTetromino;
+    if (_collision(tetromino, board)) {
       _setGameOver();
     } else {
-      tetromino = newTetromino;
+      nextTetromino = new TetMaker.Tetromino();
     }
   };
 
@@ -232,6 +233,10 @@ TETRIS.Model = ( function(TetMaker) {
     return tetromino;
   };
 
+  let getNextTetromino = () => {
+    return nextTetromino;
+  }
+
   let getScore = () => {
     return score;
   };
@@ -243,6 +248,7 @@ TETRIS.Model = ( function(TetMaker) {
 
   return {
     init: init,
+    getNextTetromino: getNextTetromino,
     getTetromino: getTetromino,
     getBoard: getBoard,
     getScore: getScore,

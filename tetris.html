@@ -22,10 +22,15 @@
     <button id="start-button">Start Game</button>
   </div>
 
-  <div id="scorebox">Score: <span id="score">0</span></div>
+  <main>
+    <div id="game-info">
+      <canvas id="next-canvas"></canvas>
+      <div id="scorebox" class="box">Score: <span id="score">0</span></div>
+      <div class="box">Level: <span id="level">1</span></div>
+    </div>
 
-  <canvas id="tetris-canvas">
-  </canvas>
+    <canvas id="tetris-canvas"></canvas>
+  </main>
 
 </body>
 </html>

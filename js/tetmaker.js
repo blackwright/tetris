@@ -202,6 +202,10 @@ TETRIS.TetMaker = ( function() {
     Tetroclone.call(this, _getRandomType(), stateIndex, location);
     this.color = _getRandomColor();
 
+    this.getType = () => {
+      return this._type.name;
+    };
+
     this.getColor = function() {
       return this.color;
     };

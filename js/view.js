@@ -3,7 +3,7 @@ var TETRIS = TETRIS || {};
 TETRIS.View = ( function() {
   'use strict';
 
-  let canvas, ctx;
+  let nextCanvas, nextCtx, tetrisCanvas, tetrisCtx;
 
 
   // Receive callbacks passed from controller.
@@ -15,41 +15,64 @@ TETRIS.View = ( function() {
     let moveRight = callbacks.moveRight;
     let moveDown = callbacks.moveDown;
     let drop = callbacks.drop;
+    let resetGame = callbacks.resetGame;
 
-    _setUpCanvas();
+    _setUpNextCanvas();
+    _setUpTetrisCanvas();
 
     _startButtonListener(startGame);
-    _resetButtonListener();
+    _resetButtonListener(resetGame);
     _keydownListener(rotate, moveLeft, moveRight, moveDown, drop);
+  };
+
+
+  let _setUpNextCanvas = () => {
+    nextCanvas = document.getElementById('next-canvas');
+    nextCtx = nextCanvas.getContext('2d');
+    nextCanvas.width = 5 * 25;
+    nextCanvas.height = 4 * 25;
   };
 
 
   // Board is 10x20, cells are 25x25 pixels.
 
-  let _setUpCanvas = () => {
-    canvas = document.getElementById('tetris-canvas');
-    ctx = canvas.getContext('2d');
-    canvas.width = 10 * 25;
-    canvas.height = 20 * 25;
+  let _setUpTetrisCanvas = () => {
+    tetrisCanvas = document.getElementById('tetris-canvas');
+    tetrisCtx = tetrisCanvas.getContext('2d');
+    tetrisCanvas.width = 10 * 25;
+    tetrisCanvas.height = 20 * 25;
   };
+
+
+  let _$startButton = $('<button>').attr('id', 'start-button')
+                                   .text('Start Game');
 
 
   let _$resetButton = $('<button>').attr('id', 'reset-button')
                                    .text('Reset Game');
 
 
+  // Attach button event handler with 'one' - this unbinds the handler after
+  // first click so we don't have to manually remove it on reset.
+  // Otherwise, the handlers would stack and cause duplication.
+
   let _startButtonListener = (startGame) => {
-    $('#control-panel').on('click', '#start-button', function() {
-      $(this).remove();
-      $('#control-panel').append(_$resetButton);
+    $('#control-panel').one('click', '#start-button', () => {
+      $('#control-panel').empty()
+                         .append(_$resetButton);
       startGame();
     });
   };
 
 
-  let _resetButtonListener = () => {
-    $('#control-panel').on('click', '#reset-button', () => {
-      location.reload();
+  let _resetButtonListener = (resetGame) => {
+    $('#control-panel').one('click', '#reset-button', () => {
+      $('#control-panel').empty()
+                         .append(_$startButton);
+
+      // remove keydown listener on reset so they don't stack
+      $(document).off();
+      resetGame();
     });
   };
 
@@ -84,10 +107,54 @@ TETRIS.View = ( function() {
   // Tetrominoes are filled in one color, then again 1px smaller
   // for the appearance of a stroke.
 
+  let _renderNext = (nextTetromino) => {
+    nextCtx.fillStyle = '#DADFE1';
+    nextCtx.fillRect(0, 0, nextCanvas.width, nextCanvas.height);
+
+    // offset is used to center the piece in next-canvas,
+    // 'I' and 'O' pieces are special cases
+    let xOffset = 25;
+    let yOffset = 25;
+    if (nextTetromino.getType() === 'I') {
+      xOffset = 12;
+      yOffset = 12;
+    } else if (nextTetromino.getType() === 'O') {
+      xOffset = 12;
+      yOffset = 25;
+    }
+
+    // render tetromino border
+    _setFillColor(nextCtx, 'w');
+    let state = nextTetromino.getState();
+    state.forEach( function(row, y) {
+      row.forEach( function(block, x) {
+        if (block) {
+          nextCtx.fillRect(x * 25 + xOffset,
+                           y * yOffset + 25,
+                           25, 25);
+        }
+      })
+    })
+
+    // render tetromino block color
+    let color = nextTetromino.getColor();
+    _setFillColor(nextCtx, color);
+    state.forEach( function(row, y) {
+      row.forEach( function(block, x) {
+        if (block) {
+          nextCtx.fillRect(x * 25 + xOffset + 1,
+                           y * 25 + yOffset + 1,
+                           23, 23);
+        }
+      })
+    })
+  };
+
+
   let _renderTetromino = (tetromino) => {
 
     // render tetromino border
-    _setFillColor('w');
+    _setFillColor(tetrisCtx, 'w');
     let state = tetromino.getState();
     let location = tetromino.getLocation();
     state.forEach( function(row, stateY) {
@@ -95,20 +162,24 @@ TETRIS.View = ( function() {
         if (block) {
           let y = location[0] + stateY;
           let x = location[1] + stateX;
-          ctx.fillRect(x * 25, y * 25, 25, 25);
+          tetrisCtx.fillRect(x * 25,
+                             y * 25,
+                             25, 25);
         }
       })
     })
 
     // render tetromino block color
     let color = tetromino.getColor();
-    _setFillColor(color);
+    _setFillColor(tetrisCtx, color);
     state.forEach( function(row, stateY) {
       row.forEach( function(block, stateX) {
         if (block) {
           let y = location[0] + stateY;
           let x = location[1] + stateX;
-          ctx.fillRect(x * 25 + 1, y * 25 + 1, 23, 23);
+          tetrisCtx.fillRect(x * 25 + 1,
+                             y * 25 + 1,
+                             23, 23);
         }
       })
     })
@@ -123,8 +194,10 @@ TETRIS.View = ( function() {
     board.forEach( function(row, y) {
       row.forEach( function(block, x) {
         if (block) {
-          _setFillColor('w');
-          ctx.fillRect(x * 25, y * 25, 25, 25);
+          _setFillColor(tetrisCtx, 'w');
+          tetrisCtx.fillRect(x * 25,
+                             y * 25,
+                             25, 25);
         }
       })
     })
@@ -133,8 +206,10 @@ TETRIS.View = ( function() {
     board.forEach( function(row, y) {
       row.forEach( function(block, x) {
         if (block) {
-          _setFillColor(block);
-          ctx.fillRect(x * 25 + 1, y * 25 + 1, 23, 23);
+          _setFillColor(tetrisCtx, block);
+          tetrisCtx.fillRect(x * 25 + 1,
+                             y * 25 + 1,
+                             23, 23);
         }
       })
     })
@@ -143,7 +218,7 @@ TETRIS.View = ( function() {
 
   // Convenience method for setting fill color semantically.
 
-  let _setFillColor = (color) => {
+  let _setFillColor = (ctx, color) => {
     let fillColor;
     switch(color) {
       case 'w':
@@ -179,28 +254,34 @@ TETRIS.View = ( function() {
   };
 
 
-  let gameOver = () => {
-    let x = canvas.width / 2;
-    let y = canvas.height / 2;
-    ctx.font = "22px 'Press Start 2P'";
-    ctx.textAlign = 'center';
-    ctx.fillStyle = 'black';
-    ctx.fillText('Game Over!', x, y);
+  let updateLevel = (level) => {
+    $('#level').text(level + 1);
   };
 
 
-  let render = (tetromino, board) => {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  let gameOver = () => {
+    let x = tetrisCanvas.width / 2;
+    let y = tetrisCanvas.height / 2;
+    tetrisCtx.font = "22px 'Press Start 2P'";
+    tetrisCtx.textAlign = 'center';
+    tetrisCtx.fillStyle = 'black';
+    tetrisCtx.fillText('Game Over!', x, y);
+  };
+
+
+  let render = (nextTetromino, tetromino, board) => {
+    tetrisCtx.clearRect(0, 0, tetrisCanvas.width, tetrisCanvas.height);
 
     // render striped background
-    ctx.fillStyle = '#DADFE1';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = '#EEEEEE';
+    tetrisCtx.fillStyle = '#DADFE1';
+    tetrisCtx.fillRect(0, 0, tetrisCanvas.width, tetrisCanvas.height);
+    tetrisCtx.fillStyle = '#EEE';
     for (let j = 1; j < 10; j += 2) {
-      ctx.fillRect(j * 25, 0, 25, canvas.height);
+      tetrisCtx.fillRect(j * 25, 0, 25, tetrisCanvas.height);
     }
 
     // render game state
+    _renderNext(nextTetromino);
     _renderTetromino(tetromino);
     _renderBoard(board);
   };
@@ -210,6 +291,7 @@ TETRIS.View = ( function() {
     init: init,
     gameOver: gameOver,
     updateScore: updateScore,
+    updateLevel: updateLevel,
     render: render
   };
 
