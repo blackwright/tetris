@@ -5,6 +5,7 @@ TETRIS.Model = ( function(TetMaker) {
 
   let board, tetromino;
   let score = 0;
+  let _prevTetris = false;
   let gameOver = false;
 
   let init = () => {
@@ -23,6 +24,11 @@ TETRIS.Model = ( function(TetMaker) {
       board.push(row);
     }
     return board;
+  };
+
+
+  let _setGameOver = () => {
+    gameOver = true;
   };
 
 
@@ -58,6 +64,18 @@ TETRIS.Model = ( function(TetMaker) {
   // All movement and rotation is checked for validity by cloning the
   // tetromino, performing the movement with the tetroclone, then checking for
   // collision or out of bounds on the clone.
+
+  let rotate = () => {
+    let tetroclone = tetromino.clone();
+    tetroclone.rotate();
+    if (!_collision(tetroclone, board)) {
+      tetromino.rotate();
+      return true;
+    } else {
+      return false;
+    }
+  };
+
 
   let moveLeft = () => {
     let tetroclone = tetromino.clone();
@@ -99,6 +117,17 @@ TETRIS.Model = ( function(TetMaker) {
   };
 
 
+  // Drops tetromino as low as it can go by looping the tic method
+  // until it returns false due to collision.
+
+  let drop = () => {
+    let finished = false;
+    while (!finished) {
+      if (!tic()) finished = true;
+    }
+  };
+
+
   // Checks which lines need to be cleared and checks if there is a tetris
   // (four in a row), then updates the score based on that information.
 
@@ -120,6 +149,22 @@ TETRIS.Model = ( function(TetMaker) {
       return lines;
     } else {
       return false;
+    }
+  };
+
+
+  // Takes indices for lines meant to be cleared and
+  // splices them out of the board.
+
+  let deleteLinesFromBoard = (lineIndices) => {
+    if (lineIndices) {
+      lineIndices.sort();
+      for (let i = lineIndices.length - 1; i >= 0; i--) {
+        board.splice(lineIndices[i], 1);
+      }
+      for (let i = 0; i < lineIndices.length; i++) {
+        board.unshift(new Array(10).fill(0));
+      }
     }
   };
 
@@ -149,9 +194,13 @@ TETRIS.Model = ( function(TetMaker) {
     getBoard: getBoard,
     getScore: getScore,
     isGameOver: isGameOver,
+    rotate: rotate,
     moveLeft: moveLeft,
     moveRight: moveRight,
-    tic: tic
+    tic: tic,
+    drop: drop,
+    clearLines: clearLines,
+    deleteLinesFromBoard: deleteLinesFromBoard
   };
 
 })(TETRIS.TetMaker);
