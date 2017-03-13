@@ -99,6 +99,31 @@ TETRIS.Model = ( function(TetMaker) {
   };
 
 
+  // Checks which lines need to be cleared and checks if there is a tetris
+  // (four in a row), then updates the score based on that information.
+
+  let clearLines = () => {
+    let lines = [];
+    let consecutiveLines = 0;
+    let tetris = false;
+    board.forEach( function(row, index) {
+      if (row.every( function(block) { return block })) {
+        consecutiveLines++;
+        if (consecutiveLines > 3) tetris = true;
+        lines.push(index);
+      } else {
+        consecutiveLines = 0;
+      }
+    })
+    if (lines.length) {
+      _updateScore(tetris, lines.length);
+      return lines;
+    } else {
+      return false;
+    }
+  };
+
+
   // Getters
 
   let getBoard = () => {

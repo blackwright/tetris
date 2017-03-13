@@ -8,12 +8,17 @@ TETRIS.Controller = ( function(Model, View) {
   let acceptInput = false;
 
 
-  // Initializes model and view, passing callback functions into
-  // an object so that model and view are decoupled.
+  // Initializes model and view, passing in callback functions.
 
   let init = () => {
     Model.init();
-    View.init({});
+
+    View.init({
+      startGame: startGame,
+      moveLeft: moveLeft,
+      moveRight: moveRight,
+      moveDown: moveDown
+    });
 
     render();
   }
@@ -29,6 +34,13 @@ TETRIS.Controller = ( function(Model, View) {
     if (Model.isGameOver()) {
       _gameOver();
     }
+  };
+
+
+  let _clearLines = () => {
+    let lines = Model.clearLines();
+    if (lines) updateScore();
+    Model.deleteLinesFromBoard(lines);
   };
 
 
