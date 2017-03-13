@@ -32,6 +32,26 @@ TETRIS.Model = ( function(TetMaker) {
   };
 
 
+  let _addScore = (amount) => {
+    return score += amount;
+  };
+
+
+  // Score increases based on lines cleared, but tetris (4x) is special case.
+  // Uses _prevTetris variable for consecutive tetris bonus.
+
+  let _updateScore = (tetris, numLines) => {
+    if (tetris) {
+      _addScore(800);
+      if (_prevTetris) _addScore(400);
+      _prevTetris = true;
+    } else {
+      _prevTetris = false;
+      _addScore(100 * numLines);
+    }
+  };
+
+
   let _outOfBounds = (y, x) => {
     if (y > 19 || x < 0 || x > 9) {
       return true;
