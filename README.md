@@ -13,5 +13,6 @@ Use your arrow keys to move/rotate and hit space to drop down.
 - Next tetromino is displayed on screen.
 - Clear 4 lines (tetris!) for a score bonus.
 - Get consecutive tetrises for a larger bonus.
+- Reset button restarts the game without reloading page.
 
 ![Screenshot](https://github.com/blackwright/tetris/blob/master/screenshots/tetris2.jpg?raw=true)
