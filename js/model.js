@@ -15,7 +15,7 @@ TETRIS.Model = ( function(TetMaker) {
   };
 
 
-  // Board is generated as a 10 "width" by 20 "height"
+  // Board begins as a 10 "width" by 20 "height"
   // two-dimensional array of zeroes.
 
   let _generateBoard = () => {

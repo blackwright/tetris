@@ -42,10 +42,11 @@ TETRIS.Controller = ( function(Model, View) {
   let _gameLoop = () => {
     Model.tic();
     _clearLines();
-    render();
     if (Model.isGameOver()) {
       _gameOver();
+      return;
     }
+    render();
   };
 
 
@@ -124,10 +125,12 @@ TETRIS.Controller = ( function(Model, View) {
   // Check for cleared lines on tic and instant drop.
 
   let moveDown = () => {
-    if (acceptInput) {
+    if (acceptInput && !Model.isGameOver()) {
       Model.tic();
       _clearLines();
-      render();
+
+      // don't render the new tetromino if it's game over
+      if (!Model.isGameOver()) render();
     }
   };
 
@@ -135,7 +138,9 @@ TETRIS.Controller = ( function(Model, View) {
     if (acceptInput) {
       Model.drop();
       _clearLines();
-      render();
+
+      // don't render the new tetromino if it's game over
+      if (!Model.isGameOver()) render();
     }
   };
 
