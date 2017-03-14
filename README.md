@@ -18,7 +18,7 @@ Use your arrow keys to move/rotate and hit space to drop down.
 
 ### Technical Notes
 
-- JavaScript structured with revealing modules in MVC style.
-- Collisions checked by performing potential movements on tetromino "clones."
+- JavaScript organized with revealing modules in MVC style.
+- Collisions checked by performing potential movements on "cloned" tetromino prototype objects.
 - Event handlers attached with jQuery.
-- Reset button restarts the game without reloading page.
+- Reset button restarts the game by reinitializing modules.
