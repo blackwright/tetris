@@ -291,6 +291,47 @@ TETRIS.View = ( function() {
   };
 
 
+  let hideLines = (lines) => {
+    lines.forEach( (line) => {
+      console.log('line: ' + line);
+      tetrisCtx.clearRect(0, line * 25, tetrisCanvas.width, 25);
+    })
+    console.log('running');
+  };
+
+
+  let showLines = (lines, board) => {
+
+    // render block border
+    board.forEach( function(row, y) {
+      if (lines.includes(y)) {
+        row.forEach( function(block, x) {
+          if (block) {
+            _setFillColor(tetrisCtx, 'w');
+            tetrisCtx.fillRect(x * 25,
+                               y * 25,
+                               25, 25);
+          }
+        })
+      }
+    })
+
+    // render block color
+    board.forEach( function(row, y) {
+      if (lines.includes(y)) {
+        row.forEach( function(block, x) {
+          if (block) {
+            _setFillColor(tetrisCtx, block);
+            tetrisCtx.fillRect(x * 25 + 1,
+                               y * 25 + 1,
+                               23, 23);
+          }
+        })
+      }
+    })
+  };
+
+
   let render = (nextTetromino, tetromino, board) => {
     tetrisCtx.clearRect(0, 0, tetrisCanvas.width, tetrisCanvas.height);
 
@@ -306,6 +347,8 @@ TETRIS.View = ( function() {
     gameOver: gameOver,
     updateScore: updateScore,
     updateLevel: updateLevel,
+    hideLines: hideLines,
+    showLines: showLines,
     render: render
   };
 

@@ -208,7 +208,7 @@ TETRIS.Model = ( function(TetMaker) {
 
 
   // Takes indices for lines meant to be cleared and
-  // splices them out of the board.
+  // splices them out of the board, then unshifts new empty line.
 
   let deleteLinesFromBoard = (lineIndices) => {
     if (lineIndices) {

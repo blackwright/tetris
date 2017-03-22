@@ -1,6 +1,6 @@
 var TETRIS = TETRIS || {};
 
-driver = undefined;
+tetDriver = undefined;
 
 
 TETRIS.Controller = ( function(Model, View) {
@@ -42,11 +42,7 @@ TETRIS.Controller = ( function(Model, View) {
   let _gameLoop = () => {
     Model.tic();
     _clearLines();
-    if (Model.isGameOver()) {
-      _gameOver();
-      return;
-    }
-    render();
+    if (Model.isGameOver()) _gameOver();
   };
 
 
@@ -56,13 +52,43 @@ TETRIS.Controller = ( function(Model, View) {
   };
 
 
+  let _pauseGame = () => {
+    acceptInput = false;
+    clearInterval(tetDriver);
+  };
+
+
+  let _flashLines = (lines) => {
+    _pauseGame();
+    let board = Model.getBoard();
+    View.hideLines(lines);
+    setTimeout( () => {
+      View.showLines(lines, board);
+      setTimeout( () => {
+        View.hideLines(lines);
+        setTimeout( () => {
+          View.showLines(lines, board);
+          setTimeout( () => {
+            Model.deleteLinesFromBoard(lines);
+            render();
+            startGame();
+          }, 160);
+        }, 160);
+      }, 160);
+    }, 160);
+  };
+
+
   let _clearLines = () => {
+    render();
     let lines = Model.clearLines();
     if (lines) {
       _updateScore();
       _updateLevel(lines);
+      _flashLines(lines);
+    } else {
+      if (!Model.isGameOver()) render();
     }
-    Model.deleteLinesFromBoard(lines);
   };
 
 
@@ -75,9 +101,9 @@ TETRIS.Controller = ( function(Model, View) {
 
 
   let _updateGameSpeed = (level) => {
-    clearInterval(driver);
+    clearInterval(tetDriver);
     let intervalTime = 1000 - level * 50;
-    driver = setInterval(_gameLoop, intervalTime);
+    tetDriver = setInterval(_gameLoop, intervalTime);
   };
 
 
@@ -85,23 +111,22 @@ TETRIS.Controller = ( function(Model, View) {
   // a message in the view.
 
   let _gameOver = () => {
-    acceptInput = false;
-    clearInterval(driver);
+    _pauseGame();
     View.gameOver();
   };
 
 
-  // Enables input on game start. Game loop set to global var "driver"
+  // Enables input on game start. Game loop set to global var "tetDriver"
   // so that it can later be cleared.
 
   let startGame = () => {
-    driver = setInterval(_gameLoop, 1000);
+    tetDriver = setInterval(_gameLoop, 1000);
     acceptInput = true;
   };
 
 
   let resetGame = () => {
-    clearInterval(driver);
+    clearInterval(tetDriver);
     init();
   };
 
@@ -128,9 +153,6 @@ TETRIS.Controller = ( function(Model, View) {
     if (acceptInput && !Model.isGameOver()) {
       Model.tic();
       _clearLines();
-
-      // don't render the new tetromino if it's game over
-      if (!Model.isGameOver()) render();
     }
   };
 
@@ -138,9 +160,6 @@ TETRIS.Controller = ( function(Model, View) {
     if (acceptInput) {
       Model.drop();
       _clearLines();
-
-      // don't render the new tetromino if it's game over
-      if (!Model.isGameOver()) render();
     }
   };
 
