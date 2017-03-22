@@ -3,7 +3,9 @@ var TETRIS = TETRIS || {};
 TETRIS.View = ( function() {
   'use strict';
 
-  let nextCanvas, nextCtx, tetrisCanvas, tetrisCtx;
+  let nextCanvas, nextCtx,
+      bkgCanvas, bkgCtx,
+      tetrisCanvas, tetrisCtx;
 
 
   // Receive callbacks passed from controller.
@@ -18,11 +20,13 @@ TETRIS.View = ( function() {
     let resetGame = callbacks.resetGame;
 
     _setUpNextCanvas();
-    _setUpTetrisCanvas();
+    _setUpMainCanvases();
 
     _startButtonListener(startGame);
     _resetButtonListener(resetGame);
     _keydownListener(rotate, moveLeft, moveRight, moveDown, drop);
+
+    _renderBackground();
   };
 
 
@@ -36,11 +40,17 @@ TETRIS.View = ( function() {
 
   // Board is 10x20, cells are 25x25 pixels.
 
-  let _setUpTetrisCanvas = () => {
+  let _setUpMainCanvases = () => {
+    let canvasContainer = document.getElementById('canvas-container');
+
+    bkgCanvas = document.getElementById('bkg-canvas');
+    bkgCtx = bkgCanvas.getContext('2d');
+
     tetrisCanvas = document.getElementById('tetris-canvas');
     tetrisCtx = tetrisCanvas.getContext('2d');
-    tetrisCanvas.width = 10 * 25;
-    tetrisCanvas.height = 20 * 25;
+
+    canvasContainer.width = bkgCanvas.width = tetrisCanvas.width = 10 * 25;
+    canvasContainer.height = bkgCanvas.height = tetrisCanvas.height = 20 * 25;
   };
 
 
@@ -186,6 +196,18 @@ TETRIS.View = ( function() {
   };
 
 
+  // Render striped background.
+
+  let _renderBackground = () => {
+    bkgCtx.fillStyle = '#DADFE1';
+    bkgCtx.fillRect(0, 0, bkgCanvas.width, bkgCanvas.height);
+    bkgCtx.fillStyle = '#EEE';
+    for (let j = 1; j < 10; j += 2) {
+      bkgCtx.fillRect(j * 25, 0, 25, bkgCanvas.height);
+    }
+  };
+
+
   // Board is multi-colored so fill color is set for each iteration.
 
   let _renderBoard = (board) => {
@@ -271,14 +293,6 @@ TETRIS.View = ( function() {
 
   let render = (nextTetromino, tetromino, board) => {
     tetrisCtx.clearRect(0, 0, tetrisCanvas.width, tetrisCanvas.height);
-
-    // render striped background
-    tetrisCtx.fillStyle = '#DADFE1';
-    tetrisCtx.fillRect(0, 0, tetrisCanvas.width, tetrisCanvas.height);
-    tetrisCtx.fillStyle = '#EEE';
-    for (let j = 1; j < 10; j += 2) {
-      tetrisCtx.fillRect(j * 25, 0, 25, tetrisCanvas.height);
-    }
 
     // render game state
     _renderNext(nextTetromino);

@@ -2,7 +2,6 @@
 <html>
 <head>
   <title>Tetris!</title>
-  <link rel="stylesheet" type="text/css" href="css/style.css">
   <script
   src="https://code.jquery.com/jquery-3.1.1.min.js"
   integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
@@ -11,6 +10,8 @@
   <script type="text/javascript" src="js/model.js"></script>
   <script type="text/javascript" src="js/view.js"></script>
   <script type="text/javascript" src="js/controller.js"></script>
+  <link href="https://fonts.googleapis.com/css?family=Press+Start+2P" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="css/style.css">
 </head>
 <body>
 
@@ -29,7 +30,10 @@
       <div class="box">Level: <div id="level">1</div></div>
     </div>
 
-    <canvas id="tetris-canvas"></canvas>
+    <div id="canvas-container">
+      <canvas id="tetris-canvas">Your browser doesn't support HTML5 canvas.</canvas>
+      <canvas id="bkg-canvas"></canvas>
+    </div>
   </main>
 
 </body>
