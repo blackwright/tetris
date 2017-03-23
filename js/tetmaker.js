@@ -1,6 +1,6 @@
 var TETRIS = TETRIS || {};
 
-TETRIS.TetMaker = ( function() {
+TETRIS.TetMaker = ( () => {
   'use strict';
 
   const _colors = ['r', 'o', 'y', 'g', 'b', 'i', 'v'];

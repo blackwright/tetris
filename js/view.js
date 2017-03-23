@@ -1,6 +1,6 @@
 var TETRIS = TETRIS || {};
 
-TETRIS.View = ( function() {
+TETRIS.View = ( () => {
   'use strict';
 
   let nextCanvas, nextCtx,
