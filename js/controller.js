@@ -94,9 +94,14 @@ TETRIS.Controller = ( function(Model, View) {
 
   let _updateLevel = (lines) => {
     clearedLineCount += lines.length;
-    let level = parseInt(clearedLineCount / 5);
+    let level = _getLevel();
     _updateGameSpeed(level);
     View.updateLevel(level);
+  };
+
+
+  let _getLevel = () => {
+    return parseInt(clearedLineCount / 5);
   };
 
 
@@ -116,11 +121,12 @@ TETRIS.Controller = ( function(Model, View) {
   };
 
 
-  // Enables input on game start. Game loop set to global var "tetDriver"
+  // Enables input on game start. Interval set to global var "tetDriver"
   // so that it can later be cleared.
 
   let startGame = () => {
-    tetDriver = setInterval(_gameLoop, 1000);
+    let intervalTime = 1000 - _getLevel() * 50;
+    tetDriver = setInterval(_gameLoop, intervalTime);
     acceptInput = true;
   };
 
