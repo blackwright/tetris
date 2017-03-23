@@ -10,14 +10,14 @@ TETRIS.View = ( function() {
 
   // Receive callbacks passed from controller.
 
-  let init = (callbacks) => {
-    let startGame = callbacks.startGame;
-    let rotate = callbacks.rotate;
-    let moveLeft = callbacks.moveLeft;
-    let moveRight = callbacks.moveRight;
-    let moveDown = callbacks.moveDown;
-    let drop = callbacks.drop;
-    let resetGame = callbacks.resetGame;
+  const init = (callbacks) => {
+    const startGame = callbacks.startGame;
+    const rotate = callbacks.rotate;
+    const moveLeft = callbacks.moveLeft;
+    const moveRight = callbacks.moveRight;
+    const moveDown = callbacks.moveDown;
+    const drop = callbacks.drop;
+    const resetGame = callbacks.resetGame;
 
     _setUpNextCanvas();
     _setUpMainCanvases();
@@ -30,7 +30,7 @@ TETRIS.View = ( function() {
   };
 
 
-  let _setUpNextCanvas = () => {
+  const _setUpNextCanvas = () => {
     nextCanvas = document.getElementById('next-canvas');
     nextCtx = nextCanvas.getContext('2d');
     nextCanvas.width = 5 * 25;
@@ -40,7 +40,7 @@ TETRIS.View = ( function() {
 
   // Board is 10x20, cells are 25x25 pixels.
 
-  let _setUpMainCanvases = () => {
+  const _setUpMainCanvases = () => {
     let canvasContainer = document.getElementById('canvas-container');
 
     bkgCanvas = document.getElementById('bkg-canvas');
@@ -54,11 +54,11 @@ TETRIS.View = ( function() {
   };
 
 
-  let _$startButton = $('<button>').attr('id', 'start-button')
+  const _$startButton = $('<button>').attr('id', 'start-button')
                                    .text('Start Game');
 
 
-  let _$resetButton = $('<button>').attr('id', 'reset-button')
+  const _$resetButton = $('<button>').attr('id', 'reset-button')
                                    .text('Reset Game');
 
 
@@ -66,7 +66,7 @@ TETRIS.View = ( function() {
   // first click so we don't have to manually remove it on reset.
   // Otherwise, the handlers would stack and cause duplication.
 
-  let _startButtonListener = (startGame) => {
+  const _startButtonListener = (startGame) => {
     $('#control-panel').one('click', '#start-button', () => {
       $('#control-panel').empty()
                          .append(_$resetButton);
@@ -75,7 +75,7 @@ TETRIS.View = ( function() {
   };
 
 
-  let _resetButtonListener = (resetGame) => {
+  const _resetButtonListener = (resetGame) => {
     $('#control-panel').one('click', '#reset-button', () => {
       $('#control-panel').empty()
                          .append(_$startButton);
@@ -87,7 +87,7 @@ TETRIS.View = ( function() {
   };
 
 
-  let _keydownListener = (rotate, moveLeft, moveRight, moveDown, drop) => {
+  const _keydownListener = (rotate, moveLeft, moveRight, moveDown, drop) => {
     $(document).keydown( function(event) {
       switch(event.which) {
         // up
@@ -117,7 +117,7 @@ TETRIS.View = ( function() {
   // Tetrominoes are filled in one color, then again 1px smaller
   // for the appearance of a stroke.
 
-  let _renderNext = (nextTetromino) => {
+  const _renderNext = (nextTetromino) => {
     nextCtx.fillStyle = '#DADFE1';
     nextCtx.fillRect(0, 0, nextCanvas.width, nextCanvas.height);
 
@@ -161,7 +161,7 @@ TETRIS.View = ( function() {
   };
 
 
-  let _renderTetromino = (tetromino) => {
+  const _renderTetromino = (tetromino) => {
 
     // render tetromino border
     _setFillColor(tetrisCtx, 'w');
@@ -198,7 +198,7 @@ TETRIS.View = ( function() {
 
   // Render striped background.
 
-  let _renderBackground = () => {
+  const _renderBackground = () => {
     bkgCtx.fillStyle = '#DADFE1';
     bkgCtx.fillRect(0, 0, bkgCanvas.width, bkgCanvas.height);
     bkgCtx.fillStyle = '#EEE';
@@ -210,7 +210,7 @@ TETRIS.View = ( function() {
 
   // Board is multi-colored so fill color is set for each iteration.
 
-  let _renderBoard = (board) => {
+  const _renderBoard = (board) => {
 
     // render block border
     board.forEach( function(row, y) {
@@ -240,7 +240,7 @@ TETRIS.View = ( function() {
 
   // Convenience method for setting fill color semantically.
 
-  let _setFillColor = (ctx, color) => {
+  const _setFillColor = (ctx, color) => {
     let fillColor;
     switch(color) {
       case 'w':
@@ -271,17 +271,17 @@ TETRIS.View = ( function() {
   };
 
 
-  let updateScore = (score) => {
+  const updateScore = (score) => {
     $('#score').text(score);
   };
 
 
-  let updateLevel = (level) => {
+  const updateLevel = (level) => {
     $('#level').text(level + 1);
   };
 
 
-  let gameOver = () => {
+  const gameOver = () => {
     let x = tetrisCanvas.width / 2;
     let y = tetrisCanvas.height / 2;
     tetrisCtx.font = "22px 'Press Start 2P'";
@@ -291,16 +291,14 @@ TETRIS.View = ( function() {
   };
 
 
-  let hideLines = (lines) => {
+  const hideLines = (lines) => {
     lines.forEach( (line) => {
-      console.log('line: ' + line);
       tetrisCtx.clearRect(0, line * 25, tetrisCanvas.width, 25);
     })
-    console.log('running');
   };
 
 
-  let showLines = (lines, board) => {
+  const showLines = (lines, board) => {
 
     // render block border
     board.forEach( function(row, y) {
@@ -332,7 +330,7 @@ TETRIS.View = ( function() {
   };
 
 
-  let render = (nextTetromino, tetromino, board) => {
+  const render = (nextTetromino, tetromino, board) => {
     tetrisCtx.clearRect(0, 0, tetrisCanvas.width, tetrisCanvas.height);
 
     // render game state

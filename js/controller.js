@@ -3,7 +3,7 @@ var TETRIS = TETRIS || {};
 tetDriver = undefined;
 
 
-TETRIS.Controller = ( function(Model, View) {
+TETRIS.Controller = ( (Model, View) => {
   'use strict';
 
   let clearedLineCount, acceptInput;
@@ -11,7 +11,7 @@ TETRIS.Controller = ( function(Model, View) {
 
   // Initializes model and view, passing in callback functions.
 
-  let init = () => {
+  const init = () => {
 
     clearedLineCount = 0;
 
@@ -39,26 +39,26 @@ TETRIS.Controller = ( function(Model, View) {
   // Game loop tics the tetromino downward, clears lines if needed,
   // renders, then checks for game over.
 
-  let _gameLoop = () => {
+  const _gameLoop = () => {
     Model.tic();
     _clearLines();
     if (Model.isGameOver()) _gameOver();
   };
 
 
-  let _updateScore = () => {
+  const _updateScore = () => {
     let score = Model.getScore();
     View.updateScore(score);
   };
 
 
-  let _pauseGame = () => {
+  const _pauseGame = () => {
     acceptInput = false;
     clearInterval(tetDriver);
   };
 
 
-  let _flashLines = (lines) => {
+  const _flashLines = (lines) => {
     _pauseGame();
     let board = Model.getBoard();
     View.hideLines(lines);
@@ -79,7 +79,7 @@ TETRIS.Controller = ( function(Model, View) {
   };
 
 
-  let _clearLines = () => {
+  const _clearLines = () => {
     render();
     let lines = Model.clearLines();
     if (lines) {
@@ -92,7 +92,7 @@ TETRIS.Controller = ( function(Model, View) {
   };
 
 
-  let _updateLevel = (lines) => {
+  const _updateLevel = (lines) => {
     clearedLineCount += lines.length;
     let level = _getLevel();
     _updateGameSpeed(level);
@@ -100,12 +100,12 @@ TETRIS.Controller = ( function(Model, View) {
   };
 
 
-  let _getLevel = () => {
+  const _getLevel = () => {
     return parseInt(clearedLineCount / 5);
   };
 
 
-  let _updateGameSpeed = (level) => {
+  const _updateGameSpeed = (level) => {
     clearInterval(tetDriver);
     let intervalTime = 1000 - level * 50;
     tetDriver = setInterval(_gameLoop, intervalTime);
@@ -115,7 +115,7 @@ TETRIS.Controller = ( function(Model, View) {
   // Game over state disables input, clears interval, and renders
   // a message in the view.
 
-  let _gameOver = () => {
+  const _gameOver = () => {
     _pauseGame();
     View.gameOver();
   };
@@ -124,14 +124,14 @@ TETRIS.Controller = ( function(Model, View) {
   // Enables input on game start. Interval set to global var "tetDriver"
   // so that it can later be cleared.
 
-  let startGame = () => {
+  const startGame = () => {
     let intervalTime = 1000 - _getLevel() * 50;
     tetDriver = setInterval(_gameLoop, intervalTime);
     acceptInput = true;
   };
 
 
-  let resetGame = () => {
+  const resetGame = () => {
     clearInterval(tetDriver);
     init();
   };
@@ -140,29 +140,29 @@ TETRIS.Controller = ( function(Model, View) {
   // All movement checks if input is enabled before executing the move
   // and then rendering the view.
 
-  let rotate = () => {
+  const rotate = () => {
     if (acceptInput && Model.rotate()) render();
   };
 
-  let moveLeft = () => {
+  const moveLeft = () => {
     if (acceptInput && Model.moveLeft()) render();
   };
 
-  let moveRight = () => {
+  const moveRight = () => {
     if (acceptInput && Model.moveRight()) render();
   };
 
 
   // Check for cleared lines on tic and instant drop.
 
-  let moveDown = () => {
+  const moveDown = () => {
     if (acceptInput && !Model.isGameOver()) {
       Model.tic();
       _clearLines();
     }
   };
 
-  let drop = () => {
+  const drop = () => {
     if (acceptInput) {
       Model.drop();
       _clearLines();
@@ -172,7 +172,7 @@ TETRIS.Controller = ( function(Model, View) {
 
   // Render method gets game state from model and passes them into the view.
 
-  let render = () => {
+  const render = () => {
     let nextTetromino = Model.getNextTetromino();
     let tetromino = Model.getTetromino();
     let board = Model.getBoard();

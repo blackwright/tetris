@@ -1,11 +1,11 @@
 var TETRIS = TETRIS || {};
 
-TETRIS.Model = ( function(TetMaker) {
+TETRIS.Model = ( (TetMaker) => {
   'use strict';
 
   let _prevTetris, board, tetromino, nextTetromino, score, gameOver;
 
-  let init = () => {
+  const init = () => {
     _prevTetris = false;
     board = _generateBoard();
     tetromino = new TetMaker.Tetromino();
@@ -18,22 +18,22 @@ TETRIS.Model = ( function(TetMaker) {
   // Board begins as a 10 "width" by 20 "height"
   // two-dimensional array of zeroes.
 
-  let _generateBoard = () => {
-    let board = [];
+  const _generateBoard = () => {
+    let newBoard = [];
     for (let i = 0; i < 20; i++) {
       let row = new Array(10).fill(0);
-      board.push(row);
+      newBoard.push(row);
     }
-    return board;
+    return newBoard;
   };
 
 
-  let _setGameOver = () => {
+  const _setGameOver = () => {
     gameOver = true;
   };
 
 
-  let _addScore = (amount) => {
+  const _addScore = (amount) => {
     return score += amount;
   };
 
@@ -41,7 +41,7 @@ TETRIS.Model = ( function(TetMaker) {
   // Score increases based on lines cleared, but tetris (4x) is special case.
   // Uses _prevTetris variable for consecutive tetris bonus.
 
-  let _updateScore = (tetris, numLines) => {
+  const _updateScore = (tetris, numLines) => {
     if (tetris) {
       _addScore(800);
       if (_prevTetris) _addScore(400);
@@ -53,7 +53,7 @@ TETRIS.Model = ( function(TetMaker) {
   };
 
 
-  let _outOfBounds = (y, x) => {
+  const _outOfBounds = (y, x) => {
     if (y > 19 || x < 0 || x > 9) {
       return true;
     } else {
@@ -66,7 +66,7 @@ TETRIS.Model = ( function(TetMaker) {
   // and board state. Tetromino location is referenced by its state's
   // "top-left" element.
 
-  let _collision = (tetroclone, board) => {
+  const _collision = (tetroclone, board) => {
     let state = tetroclone.getState();
     let location = tetroclone.getLocation();
     for (let rowIdx = 0; rowIdx < state.length; rowIdx++) {
@@ -84,7 +84,7 @@ TETRIS.Model = ( function(TetMaker) {
 
   // Board absorbs tetromino blocks, triggered on collision.
 
-  let _merge = (tetromino, board) => {
+  const _merge = (tetromino, board) => {
     let state = tetromino.getState();
     let color = tetromino.getColor();
     let location = tetromino.getLocation();
@@ -105,7 +105,7 @@ TETRIS.Model = ( function(TetMaker) {
   // Game over occurs if nextTetromino starts with collision.
   // Otherwise, spawn a new tetromino and set to nextTetromino.
 
-  let _spawn = () => {
+  const _spawn = () => {
     tetromino = nextTetromino;
     if (_collision(tetromino, board)) {
       _setGameOver();
@@ -119,7 +119,7 @@ TETRIS.Model = ( function(TetMaker) {
   // tetromino, performing the movement with the tetroclone, then checking for
   // collision or out of bounds on the clone.
 
-  let rotate = () => {
+  const rotate = () => {
     let tetroclone = tetromino.clone();
     tetroclone.rotate();
     if (!_collision(tetroclone, board)) {
@@ -131,7 +131,7 @@ TETRIS.Model = ( function(TetMaker) {
   };
 
 
-  let moveLeft = () => {
+  const moveLeft = () => {
     let tetroclone = tetromino.clone();
     tetroclone.moveLeft();
     if (!_collision(tetroclone, board)) {
@@ -143,7 +143,7 @@ TETRIS.Model = ( function(TetMaker) {
   };
 
 
-  let moveRight = () => {
+  const moveRight = () => {
     let tetroclone = tetromino.clone();
     tetroclone.moveRight();
     if (!_collision(tetroclone, board)) {
@@ -158,7 +158,7 @@ TETRIS.Model = ( function(TetMaker) {
   // Tic is the tetromino's natural falling movement. Called on interval
   // from the controller and whenever the down key is pressed.
 
-  let tic = () => {
+  const tic = () => {
     let tetroclone = tetromino.clone();
     tetroclone.tic();
     if (!_collision(tetroclone, board)) {
@@ -174,7 +174,7 @@ TETRIS.Model = ( function(TetMaker) {
   // Drops tetromino as low as it can go by looping the tic method
   // until it returns false due to collision.
 
-  let drop = () => {
+  const drop = () => {
     let finished = false;
     while (!finished) {
       if (!tic()) finished = true;
@@ -185,7 +185,7 @@ TETRIS.Model = ( function(TetMaker) {
   // Checks which lines need to be cleared and checks if there is a tetris
   // (four in a row), then updates the score based on that information.
 
-  let clearLines = () => {
+  const clearLines = () => {
     let lines = [];
     let consecutiveLines = 0;
     let tetris = false;
@@ -210,7 +210,7 @@ TETRIS.Model = ( function(TetMaker) {
   // Takes indices for lines meant to be cleared and
   // splices them out of the board, then unshifts new empty line.
 
-  let deleteLinesFromBoard = (lineIndices) => {
+  const deleteLinesFromBoard = (lineIndices) => {
     if (lineIndices) {
       lineIndices.sort();
       for (let i = lineIndices.length - 1; i >= 0; i--) {
@@ -225,23 +225,23 @@ TETRIS.Model = ( function(TetMaker) {
 
   // Getters
 
-  let getBoard = () => {
+  const getBoard = () => {
     return board;
   };
 
-  let getTetromino = () => {
+  const getTetromino = () => {
     return tetromino;
   };
 
-  let getNextTetromino = () => {
+  const getNextTetromino = () => {
     return nextTetromino;
   }
 
-  let getScore = () => {
+  const getScore = () => {
     return score;
   };
 
-  let isGameOver = () => {
+  const isGameOver = () => {
     return gameOver;
   };
 

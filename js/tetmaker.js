@@ -3,12 +3,12 @@ var TETRIS = TETRIS || {};
 TETRIS.TetMaker = ( function() {
   'use strict';
 
-  let _colors = ['r', 'o', 'y', 'g', 'b', 'i', 'v'];
+  const _colors = ['r', 'o', 'y', 'g', 'b', 'i', 'v'];
 
   // Tetromino rotation states are hardcoded here. Their location on the board
   // is determined by the first (top-left) element in the 2-d array.
 
-  let _types = [ {name: 'I',
+  const _types = [ {name: 'I',
                   states: [
                            [[0, 0, 0, 0],
                             [1, 1, 1, 1],
@@ -145,12 +145,12 @@ TETRIS.TetMaker = ( function() {
 
   // Helpers for tetromino randomization.
 
-  let _getRandomColor = () => {
+  const _getRandomColor = () => {
     let index = Math.floor(Math.random() * _colors.length);
     return _colors[index];
   };
 
-  let _getRandomType = () => {
+  const _getRandomType = () => {
     let index = Math.floor(Math.random() * _types.length);
     return _types[index];
   };
