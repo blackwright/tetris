@@ -89,6 +89,8 @@ TETRIS.View = ( () => {
 
   const _keydownListener = (rotate, moveLeft, moveRight, moveDown, drop) => {
     $(document).keydown( function(event) {
+      event.preventDefault();
+      
       switch(event.which) {
         // up
         case 38:
